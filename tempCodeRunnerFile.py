@@ -73,7 +73,7 @@ def analyze_packet_data(df):
     protocol_counts_df.columns = ["Protocol", "Count", "Percentage"]
 
     ip_communication_protocols = (
-        df.groupby(["src_ip", "dst_ip", "protocol"]).size().reset_index()
+        df.groupby(["src_ip", "dst_ip", "protocol"]).size().reset_index(name="Count")
     )
     ip_communication_protocols.columns = [
         "Source IP",
@@ -86,7 +86,7 @@ def analyze_packet_data(df):
     ].apply(protocol_name)
     ip_communication_protocols["Percentage"] = ip_communication_protocols.groupby(
         ["Source IP", "Destination IP"]
-    )["Count"].apply(lambda x: x / x.sum() * 100)
+    )["Count"].transform(lambda x: x / x.sum() * 100)
 
     return (
         total_bandwidth,
